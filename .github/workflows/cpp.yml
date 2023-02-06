@@ -22,4 +22,6 @@ jobs:
           make test_version
           make helloworld_cli
     - name: run tests
-      run: ./test_version && ./helloworld_cli
+      run: make test
+    - name: run hello 
+      run: ./helloworld_cli
