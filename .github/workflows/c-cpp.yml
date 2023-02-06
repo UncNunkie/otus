@@ -18,7 +18,7 @@ jobs:
     - name: make
       run: |
           cd 1st && mkdir build && cd build
-          cmake -DPATCH_VERSION=${{ github.runnumber }} ..
+          cmake -DPATCH_VERSION=${{ github.run_number }} ..
           make test_version
           make helloworld_cli
 #     - name: make
