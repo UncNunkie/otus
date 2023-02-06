@@ -1,7 +1,11 @@
-name: 'build n run'
+name: build n run
+
 on:
   push:
-  pull-request:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
 jobs:
   test-job:
     runs-on: ubuntu-16.04
