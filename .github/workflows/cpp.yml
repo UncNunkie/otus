@@ -17,11 +17,11 @@ jobs:
       run: sudo apt-get update && sudo apt-get install libboost-test-dev 
     - name: make
       run: |
-          pwd && cd 1st && mkdir build && cd build
+          cd 1st && mkdir build && cd build
           cmake -DPATCH_VERSION=${{ github.run_number }} ..
           make test_version
           make helloworld_cli
     - name: run tests
-      run: pwd && make test
+      run: cd 1st && cd build && make test
     - name: run hello 
-      run: pwd && ./helloworld_cli
+      run: cd 1st && cd build && ./helloworld_cli
