@@ -21,4 +21,4 @@ jobs:
           cmake -DPATCH_VERSION=${{ github.run_number }} ..
           make ip_filter
     - name: runer
-      run: cd 2st && cd build && cat ../ip_filter.tsv | ./ip_filter
+      run: cd 2nd && cd build && cat ../ip_filter.tsv | ./ip_filter
