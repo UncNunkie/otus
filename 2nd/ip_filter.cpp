@@ -33,8 +33,8 @@ std::vector<std::string> split(const std::string &str, char d = '.')
     return r;
 }
 
-void print(const std::vector<std::vector<std::string>>& ip_pool) {
-
+void print(const std::vector<std::vector<std::string>>& ip_pool)
+{
     for(auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
     {
         for(auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
@@ -50,7 +50,8 @@ void print(const std::vector<std::vector<std::string>>& ip_pool) {
     } 
 }
 
-std::vector<std::vector<std::string>> filter(std::vector<std::vector<std::string>> ips, int count, ...) {
+std::vector<std::vector<std::string>> filter(std::vector<std::vector<std::string>> ips, int count, ...)
+{
     assert(count != 0);
 
     va_list args;
@@ -58,7 +59,8 @@ std::vector<std::vector<std::string>> filter(std::vector<std::vector<std::string
     auto curr_end = ips.end(); 
     va_start(args, count);
 
-    while (count--) {
+    while (count--)
+    {
         curr_end = std::remove_if(ips.begin(), curr_end, 
             [filter_val = va_arg(args, int), args_idx](const std::vector<std::string>& ip)
             {
@@ -76,15 +78,18 @@ std::vector<std::vector<std::string>> filter(std::vector<std::vector<std::string
 }
 
 
-std::vector<std::vector<std::string>> filter_any(std::vector<std::vector<std::string>> ips, int filter_val) {
+std::vector<std::vector<std::string>> filter_any(std::vector<std::vector<std::string>> ips, int filter_val)
+{
     auto curr_end = ips.end();
     
     curr_end = std::remove_if(ips.begin(), curr_end, 
         [filter_val](const std::vector<std::string>& ip)
         {
             bool has_filter = false;
-            for (const auto& val : ip) {
-                if (val == std::to_string(filter_val)) {
+            for (const auto& val : ip)
+            {
+                if (val == std::to_string(filter_val))
+                {
                     has_filter = true;
                 }
             }
@@ -108,14 +113,16 @@ int main(/*int argc, char const *argv[]*/)
             ip_pool.push_back(split(v.at(0)));
         }
 
-        std::sort(ip_pool.begin(), ip_pool.end(), [](const auto& lhs, const auto& rhs){
-            for (uint8_t cmp_idx = 0; cmp_idx < 4; ++cmp_idx) {
+        std::sort(ip_pool.begin(), ip_pool.end(), [](const auto& lhs, const auto& rhs) {
+            for (uint8_t cmp_idx = 0; cmp_idx < 4; ++cmp_idx)
+            {
                 auto lhs_part = std::atoi(lhs[cmp_idx].c_str());
                 auto rhs_part = std::atoi(rhs[cmp_idx].c_str());
                 if (lhs_part == rhs_part)
                 {
                     continue;
-                } else {
+                } else
+                {
                     return lhs_part > rhs_part;
                 }
             }
