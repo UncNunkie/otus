@@ -21,9 +21,6 @@ target_include_directories(helloworld
     PRIVATE "${CMAKE_BINARY_DIR}"
 )
 
-message("boostpath : ${BOOST_INCLUDE_DIR}")
-message("boostpath : ${Boost_LIBRARIES}")
-
 set_target_properties(test_version PROPERTIES
     COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
     #INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
@@ -37,27 +34,16 @@ target_link_libraries(test_version
     helloworld
 )
 
-if (MSVC)
-    target_compile_options(helloworld_cli PRIVATE
-        /W4
-    )
-    target_compile_options(helloworld PRIVATE
-        /W4
-    )
-    target_compile_options(test_version PRIVATE
-        /W4
-    )
-else ()
-    target_compile_options(helloworld_cli PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-    target_compile_options(helloworld PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-    target_compile_options(test_version PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-endif()
+target_compile_options(helloworld_cli PRIVATE
+    -Wall -Wextra -pedantic -Werror
+)
+target_compile_options(helloworld PRIVATE
+    -Wall -Wextra -pedantic -Werror
+)
+target_compile_options(test_version PRIVATE
+    -Wall -Wextra -pedantic -Werror
+)
+
 
 
 
