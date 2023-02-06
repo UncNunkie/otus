@@ -13,11 +13,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: cmake
-      run: cmake
     - name: make
-      run: make
-    - name: make test_version
-      run: make test_version
-    - name: make helloworld_cli
-      run: make helloworld_cli
+      run: |
+          cd 1st && mkdir build && 
+          cmake ..
+          make test_version
+          make helloworld_cli
+#     - name: make
+#       run: make
+#     - name: make test_version
+#       run: make test_version
+#     - name: make helloworld_cli
+#       run: make helloworld_cli
