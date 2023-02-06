@@ -1,0 +1,24 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: boost install
+      run: sudo apt-get update && sudo apt-get install libboost-test-dev 
+    - name: make
+      run: |
+          cd 2nd && mkdir build && cd build
+          cmake -DPATCH_VERSION=${{ github.run_number }} ..
+          make ip_filter
+    - name: runer
+      run: cd 2st && cd build && cat ../ip_filter.tsv | ./ip_filter
