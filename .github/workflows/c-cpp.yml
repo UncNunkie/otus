@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: C++ CI
 
 on:
   push:
@@ -13,10 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: boost install
+    - run: sudo apt-get update && sudo apt-get install libboost-test-dev 
     - name: make
       run: |
           cd 1st && mkdir build && cd build
-          cmake ..
+          cmake -DPATCH_VERSION=${{ github.runnumber }} ..
           make test_version
           make helloworld_cli
 #     - name: make
