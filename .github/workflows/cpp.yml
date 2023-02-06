@@ -16,7 +16,7 @@ jobs:
       with:
         submobules: true
     - name: boost install
-    - run: sudo apt-get update && sudo apt-get install libboost-test-dev 
+      run: sudo apt-get update && sudo apt-get install libboost-test-dev 
     - name: make
       run: |
           cd 1st && mkdir build && cd build
