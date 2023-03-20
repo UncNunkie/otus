@@ -6,14 +6,9 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <algorithm>
+#include <span>
+#include <tuple>
 
-
-// ("",  '.') -> [""]
-// ("11", '.') -> ["11"]
-// ("..", '.') -> ["", "", ""]
-// ("11.", '.') -> ["11", ""]
-// (".11", '.') -> ["", "11"]
-// ("11.22", '.') -> ["11", "22"]
 std::vector<std::string> split(const std::string &str, char d = '.')
 {
     std::vector<std::string> r;
@@ -33,38 +28,38 @@ std::vector<std::string> split(const std::string &str, char d = '.')
     return r;
 }
 
-void print(const std::vector<std::vector<std::string>>& ip_pool)
+template<typename Iterable>
+void print(const Iterable& ip_pool)
 {
-    for(auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
+    for(auto ip = ip_pool.begin(); ip != ip_pool.end(); ++ip)
     {
-        for(auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
+        for(auto ip_part = ip->begin(); ip_part != ip->end(); ++ip_part)
         {
-            if (ip_part != ip->cbegin())
+            if (ip_part != ip->begin())
             {
                 std::cout << ".";
-
             }
-            std::cout << *ip_part;
+            std::cout << static_cast<int>(*ip_part);
         }
         std::cout << std::endl;
     } 
 }
 
-std::vector<std::vector<std::string>> filter(std::vector<std::vector<std::string>> ips, int count, ...)
+std::span<const std::vector<uint8_t>> filter(std::vector<std::vector<uint8_t>>& ips, int count, ...)
 {
     assert(count != 0);
 
     va_list args;
     uint8_t args_idx = 0;
-    auto curr_end = ips.end(); 
+    auto curr_end = ips.end();
     va_start(args, count);
 
     while (count--)
     {
-        curr_end = std::remove_if(ips.begin(), curr_end, 
-            [filter_val = va_arg(args, int), args_idx](const std::vector<std::string>& ip)
+      curr_end = std::stable_partition(ips.begin(), curr_end,
+            [filter_val = va_arg(args, int), args_idx](const std::vector<uint8_t>& ip)
             {
-                return ip[args_idx] != std::to_string(filter_val);
+                return ip[args_idx] == filter_val;
             }
         );
 
@@ -72,58 +67,52 @@ std::vector<std::vector<std::string>> filter(std::vector<std::vector<std::string
     }
 
     va_end(args);
-    ips.erase(curr_end, ips.end());
-
-    return ips;
+    return {ips.begin(), curr_end};
 }
 
-
-std::vector<std::vector<std::string>> filter_any(std::vector<std::vector<std::string>> ips, int filter_val)
+std::span<std::vector<uint8_t>> filter_any(std::vector<std::vector<uint8_t>>& ips, int filter_val)
 {
     auto curr_end = ips.end();
     
-    curr_end = std::remove_if(ips.begin(), curr_end, 
-        [filter_val](const std::vector<std::string>& ip)
+    curr_end = std::stable_partition(ips.begin(), curr_end,
+        [filter_val](const std::vector<uint8_t>& ip)
         {
-            bool has_filter = false;
-            for (const auto& val : ip)
-            {
-                if (val == std::to_string(filter_val))
+    	    return std::any_of(ip.begin(), ip.end(),
+                [filter_val](const auto& ip_part)
                 {
-                    has_filter = true;
+                        return ip_part == filter_val;
                 }
-            }
-            return not has_filter;
+    	    );
         }
     );
 
-    ips.erase(curr_end, ips.end());
-    return ips;
+    return {ips.begin(), curr_end};
 }
 
-int main(/*int argc, char const *argv[]*/)
+int main()
 {
     try
     {
-        std::vector<std::vector<std::string>> ip_pool;
+        std::vector<std::vector<uint8_t>> ip_pool;
+        std::vector<std::vector<std::string>> ip_pool_s;
 
         for(std::string line; std::getline(std::cin, line);)
         {
-            std::vector<std::string> v = split(line, '\t');
-            ip_pool.push_back(split(v.at(0)));
+            auto v = split(line, '\t');
+            auto vs = split(v.at(0));
+            ip_pool_s.push_back(vs);
         }
 
-        std::sort(ip_pool.begin(), ip_pool.end(), [](const auto& lhs, const auto& rhs) {
+        std::sort(ip_pool_s.begin(), ip_pool_s.end(), [](const auto& lhs, const auto& rhs) {
             for (uint8_t cmp_idx = 0; cmp_idx < 4; ++cmp_idx)
             {
-                auto lhs_part = std::atoi(lhs[cmp_idx].c_str());
-                auto rhs_part = std::atoi(rhs[cmp_idx].c_str());
-                if (lhs_part == rhs_part)
+                if (lhs[cmp_idx] == rhs[cmp_idx])
                 {
                     continue;
-                } else
+                }
+                else
                 {
-                    return lhs_part > rhs_part;
+                  return lhs[cmp_idx] > rhs[cmp_idx];
                 }
             }
             return false;
@@ -131,6 +120,16 @@ int main(/*int argc, char const *argv[]*/)
 
         // TODO reverse lexicographically sort
 
+        std::for_each(ip_pool_s.begin(), ip_pool_s.end(),
+            [&ip_pool](const auto& ip){
+                std::vector<uint8_t> ip_i;
+                for (const auto& ip_part : ip)
+                {
+                    ip_i.push_back(std::atoi(ip_part.c_str()));
+                }
+                ip_pool.push_back(ip_i);
+            }
+        );
         print(ip_pool);
         // 222.173.235.246
         // 222.130.177.64
@@ -141,11 +140,8 @@ int main(/*int argc, char const *argv[]*/)
         // 1.1.234.8
 
         // TODO filter by first byte and output
-        std::cout << "\nafter filt!!! 1" << std::endl; 
-
         auto ip = filter(ip_pool, 1, 1);
         print(ip);
-
         // 1.231.69.33
         // 1.87.203.225
         // 1.70.44.170
@@ -153,7 +149,6 @@ int main(/*int argc, char const *argv[]*/)
         // 1.1.234.8
 
         // TODO filter by first and second bytes and output
-        std::cout << "\nafter filt!!! 46, 70" << std::endl; 
 
         ip = filter(ip_pool, 2, 46, 70);
         print(ip);
@@ -163,16 +158,12 @@ int main(/*int argc, char const *argv[]*/)
         // 46.70.113.73
         // 46.70.29.76
 
-        std::cout << "\nafter filt!!! 185, 46, 86" << std::endl; 
 
         ip = filter(ip_pool, 3, 185, 46, 86);
         print(ip);
 
         // TODO filter by any byte and output
         // ip = filter_any(46)
-
-
-        std::cout << "\nafter filt_any!!! 46" << std::endl; 
 
         ip = filter_any(ip_pool, 46);
         print(ip);
