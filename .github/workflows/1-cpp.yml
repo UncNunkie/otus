@@ -33,9 +33,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ github.run_number }}
-        release_name: Release v${{ github.run_number }}
-        body: release
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
 
     - name: upload release asset
       uses: actions/upload-release-asset@v1
@@ -43,6 +42,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/1_otus_release.zip
-        asset_name: 1_otus_release.zip
-        asset_content_type: application/zip
+        asset_path: ./1st/build/helloworld-0.0.${{ github.run_number }}-Linux.deb
+        asset_name: helloworld-0.0.1-Linux.deb
+        asset_content_type: application
