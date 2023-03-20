@@ -43,5 +43,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./1st/build/helloworld-0.0.${{ github.run_number }}-Linux.deb
-        asset_name: helloworld-0.0.1-Linux.deb
+        asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
         asset_content_type: application
