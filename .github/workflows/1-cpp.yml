@@ -25,3 +25,22 @@ jobs:
       run: cd 1st && cd build && make test
     - name: run hello 
       run: cd 1st && cd build && ./helloworld_cli
+    - name: create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v1.0.0
+        release_name: Release v1.0.0
+        body: release
+
+    - name: upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/my-awesome-project.zip
+        asset_name: 1_otus_release.zip
+        asset_content_type: application/zip
