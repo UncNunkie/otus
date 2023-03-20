@@ -5,7 +5,6 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(helloworld VERSION ${PROJECT_VESRION})
 
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 add_executable(ip_filter ip_filter.cpp)
 
 set_target_properties(ip_filter PROPERTIES
