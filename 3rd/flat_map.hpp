@@ -88,35 +88,36 @@ public:
 //                    >
 //  {
 //  public:
-//      using Value = std::pair<K, V>;
+//      using value = std::pair<K, V>;
 //
 //      iterator()
-//        : node_(0) {}
+//          : node_(0)
+//      {}
 //
-//      explicit iterator(Value* p)
-//        : node_(p) {}
+//      explicit iterator(value* p)
+//          : node_(p)
+//      {}
 //
-//      template <class OtherValue>
+//      template <class Othervalue>
 //      iterator(iterator const& other)
-//        : node_(other.node_) {}
+//          : node_(other.node_)
+//      {}
 //
 //  private:
 //      friend class boost::iterator_core_access;
 //      friend class flat_map;
 //
-//      template <class OtherValue>
+//      template <typename Other>
 //      bool equal(iterator const& other) const
 //      {
-//        return this->node_ == other.node_;
+//          return this->node_ == other.node_;
 //      }
 //
-//      void increment()
-//      { ++node_; }
+//      void increment() { ++node_; }
 //
-//      Value& dereference() const
-//      { return *node_; }
+//      value& dereference() const { return *node_; }
 //
-//      Value* node_;
+//      value* node_;
 //  };
 
     flat_map() {}
@@ -127,10 +128,10 @@ public:
     V& operator[](const K& key)
     {
         auto it = std::lower_bound(val_, val_ + size_, key,
-          [](const value_type& v, const K& k)
-          {
-              return v.first < k;
-          }
+            [](const value_type& v, const K& k)
+            {
+                return v.first < k;
+            }
         );
 
         size_t pos = std::distance(val_, it);
